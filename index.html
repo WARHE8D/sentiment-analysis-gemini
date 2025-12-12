@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gemini Sentiment Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; padding: 10px; box-sizing: border-box; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        #result { margin-top: 20px; padding: 15px; border: 2px solid #ddd; min-height: 50px; background-color: #f9f9f9; }
+        h3 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h1>Gemini AI Sentiment Analyzer</h1>
+    <p>Enter any text below to get an instant sentiment analysis from the Gemini model.</p>
+    
+    <textarea id="inputText" placeholder="Type the text you want to analyze here... e.g., 'This new product launch is incredible, I love the features!'" required></textarea>
+    
+    <button onclick="performAnalysis()">Analyze Sentiment</button>
+    
+    <div id="result">
+        <h3>Analysis Result:</h3>
+        <p>Awaiting input...</p>
+    </div>
+
+    <script>
+        async function performAnalysis() {
+            const inputText = document.getElementById('inputText').value;
+            const resultDiv = document.getElementById('result');
+            
+            // Clear previous result and show loading state
+            resultDiv.innerHTML = '<h3>Analysis Result:</h3><p>Analyzing...</p>';
+            
+            try {
+                // Send a POST request to the /analyze endpoint of your server
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: inputText })
+                });
+
+                const data = await response.json();
+                
+                // Display the result from the server
+                resultDiv.innerHTML = `
+                    <h3>Analysis Result:</h3>
+                    <p><strong>Sentiment:</strong> ${data.sentiment}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = '<h3>Analysis Error:</h3><p>Failed to connect to the server or Gemini API.</p>';
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
